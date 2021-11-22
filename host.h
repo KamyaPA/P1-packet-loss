@@ -1,3 +1,7 @@
+struct packet{
+    int id;
+};
+typedef struct packet packet;
 
 struct router{
     int i;

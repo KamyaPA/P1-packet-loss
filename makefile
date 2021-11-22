@@ -22,7 +22,7 @@ endif
 $(TARGET): $(BUILD)main.o $(BUILD)host.o
 	$(CC) $^ -o $@ $(CFLAGS)
 
-$(BUILD)main.o: main.c
+$(BUILD)main.o: main.c host.c
 	$(CC) $^ -c -o $@ $(CFLAGS)
 
 $(BUILD)host.o: host.c
