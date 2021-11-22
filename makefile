@@ -19,11 +19,11 @@ ifeq ($(UNAME), $(UNAME_MAC))
 EXTENTION := .out
 endif
 
-$(BUILD):
-	if test -d $(BUILD); then echo hi; else mkdir $(BUILD); fi
-
-$(TARGET): $(BUILD)main.o
+$(TARGET): $(BUILD)main.o $(BUILD)host.o
 	$(CC) $^ -o $@ $(CFLAGS)
 
 $(BUILD)main.o: main.c
+	$(CC) $^ -c -o $@ $(CFLAGS)
+
+$(BUILD)host.o: host.c
 	$(CC) $^ -c -o $@ $(CFLAGS)
