@@ -19,9 +19,6 @@ ifeq ($(UNAME), $(UNAME_MAC))
 EXTENTION := .out
 endif
 
-$(BUILD):
-	if test -d $(BUILD); then echo hi; else mkdir $(BUILD); fi
-
 $(TARGET): $(BUILD)main.o
 	$(CC) $^ -o $@ $(CFLAGS)
 
