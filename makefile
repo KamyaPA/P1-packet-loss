@@ -13,16 +13,14 @@ BUILD := build/
 ifeq ($(UNAME), $(UNAME_LINUX))
 CLINUXFLAGS := -lm
 EXTENTION := .out
-endif
-
-ifeq ($(UNAME), $(UNAME_MAC))
+else ifeq ($(UNAME), $(UNAME_MAC))
 EXTENTION := .out
 endif
 
 $(TARGET): $(BUILD)main.o $(BUILD)host.o
 	$(CC) $^ -o $@ $(CFLAGS)
 
-$(BUILD)main.o: main.c host.c
+$(BUILD)main.o: main.c
 	$(CC) $^ -c -o $@ $(CFLAGS)
 
 $(BUILD)host.o: host.c
