@@ -1,4 +1,4 @@
-typedef Host{
+typedef struct Host{
     char hi;
 } Host;
 
