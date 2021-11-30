@@ -1,30 +1,55 @@
 #include <stdio.h>
 #include <string.h>
 
-int main(){
-    char str[] = "       #addr router1    255 8";
+#define ARGUMENTS 4 /*The max amount of arguments needed*/
+
+void create_network(char *conf_file_path){
+    char str[50];
     char delim[] = " ";
-    char *substr;
-    substr = strtok(str, delim);
-    if(substr[0] != '#'){
-        if (strcmp(substr, "addr") == 0){
-            int speed, capacity;
-            char *name;
-            name = strtok(NULL, delim);
-            sscanf(strtok(NULL, delim), "%d", &capacity);
-            sscanf(strtok(NULL, delim), "%d", &speed);
-            printf("Name = %s, capacity = %d, speed = %d\n", name, capacity, speed);
+    char *command;
+    char *arguments[ARGUMENTS];
+    int line_nr = 1;
+
+    strcpy(str, conf_file_path);
+    command = strtok(str, delim);
+    if(command[0] != '#'){
+        int i = 0;
+        char *argument;
+
+        back:
+        argument = strtok(NULL, delim);
+        if(argument != NULL){
+            arguments[i] = argument;
+            i++;
+            goto back;
         }
-        else if (strcmp(substr, "addh")){
-            /*Add host*/
+
+        if(strcmp(command, "addr") == 0){
+            int capacity, speed;
+            sscanf(arguments[1],"%d", &capacity);
+            sscanf(arguments[2],"%d", &speed);
+            printf("ADD: router, name %s, capacity %d, speed %d\n",
+                   arguments[0], capacity, speed);
+        }
+        else if(strcmp(command, "addh") == 0){
+            int speed;
+            sscanf(arguments[1],"%d", &speed);
+            printf("ADD: host, name %s, speed %d\n",
+                   arguments[0], speed);
+        }
+        else if(strcmp(command, "conr") == 0){
+            int length;
+            sscanf(arguments[2],"%d", &length);
+            printf("CONNECT: router name %s, router name %s, length %d\n",
+                   arguments[0], arguments[1], length);
+        }
+        else if(strcmp(command, "conh") == 0){
+            int length;
+            sscanf(arguments[2],"%d", &length);
+            printf("CONNECT: host name %s, router name %s, length %d\n",
+                   arguments[0], arguments[1], length);
         }
     }
-/*
-    do{
-        printf("%s\n", substr);
-        substr = strtok(NULL, delim);
-    }while(substr != NULL);
-    */
-    return 0;
+    line_nr++;
 }
 
