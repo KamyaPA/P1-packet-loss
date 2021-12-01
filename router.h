@@ -12,7 +12,7 @@ typedef struct Queue{
 typedef struct Router{
     char *name;
     struct Router *id; /*Pointer to it self*/
-    int *connections;
+    struct Router *connections; /*Pointer to a collection of routers*/
     unsigned int speed;
     RoutingTree *tree;
     Queue queue;
