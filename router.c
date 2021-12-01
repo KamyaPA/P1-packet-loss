@@ -30,8 +30,6 @@ void connect_router(Router r1, Router r2){
 }
 
 void connect_host(Router r, Host h){
-    Router r;
-    Host h;
     int n;
 
     r.connections = (Host*) malloc(n * sizeof(Host)); //ikke færdigt.. det skal returnere det nuværende array for routeren der arbejdes med.
