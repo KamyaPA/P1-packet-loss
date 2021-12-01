@@ -12,6 +12,5 @@ int main(int argc, char *argv[]){
 
     create_network("conh bar foo 7");
     create_network("conr foo hi 4");
-    create_network("#conr router2 router3 4");
     return 0;
 }
