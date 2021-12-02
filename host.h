@@ -1,5 +1,5 @@
-#include "router.h"
 typedef struct Host{
+    int type;
     char *name; 
     struct Host *id;
     unsigned int speed;
