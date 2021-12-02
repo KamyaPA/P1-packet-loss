@@ -49,12 +49,13 @@ int main()
     int router_router=0;
     for(i=0; i<n; i++)
     {   do
-        {number=i+1;
-        printf(" Connect router %d with router (if don't connect input (0)): ", number);
-        scanf("%d", &router_router);
-        if(router_router!=0)
-            connect_arr[k+i][(k-1)+router_router] = 1;}
-        while(router_router!=0);
+        {
+            number=i+1;
+            printf(" Connect router %d with router (if don't connect input (0)): ", number);
+            scanf("%d", &router_router);
+            if(router_router!=0)
+                connect_arr[k+i][(k-1)+router_router] = 1;
+        } while(router_router!=0);
     }
     // Print connection array
     printf("\n Connection array between hosts-routers and routers-routers:\n\n  ");
