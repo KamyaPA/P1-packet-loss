@@ -2,38 +2,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
-
-typedef struct RoutingTree{
-    int i;
-}RoutingTree;
-
-typedef struct Queue{
-    int length;
-    char *start;
-    char *read;
-    char *write;
-} Queue;
-
-typedef struct Router{
-    char *name;
-    struct Router *id; /*Pointer to it self*/
-    unsigned int speed;
-    RoutingTree *tree;
-    Queue queue;
-} Router;
-
-typedef struct Host{
-char *name; 
-struct Host *id; /*Pointer to it self*/
-unsigned int speed;
-char *Send;
-char *Receive;
-Router *address;
-
-}Host;
-
-
-int main(void){}
+#include "router.h"
+#include "host.h"
 
 // Speed, name and capacity(length of queue) will be input parameters along with a router struct
 
