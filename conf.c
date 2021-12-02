@@ -24,12 +24,9 @@ void create_network(char *conf_file_path){
         int i = 0;
         char *argument;
 
-        back:
-        argument = strtok(NULL, delim);
-        if(argument != NULL){
+        while(argument = strtok(NULL, delim)){
             arguments[i] = argument;
             i++;
-            goto back;
         }
 
         if(strcmp(command, "addr") == 0){
