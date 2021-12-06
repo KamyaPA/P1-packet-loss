@@ -1,7 +1,3 @@
-typedef Host{
-    char hi;
-} Host;
-
 typedef struct PacketHeader{
     unsigned int payload_length; /*How many bytes*/
     char hop_limit;

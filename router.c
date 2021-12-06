@@ -8,44 +8,44 @@
 
 
 /*Prototype*/
-void connect_router(void *r_one, void *r_two);
-void connect_host(Router r, Host h);
+void connect(void *r_one, void *r_two);
 
 
 /*Functions*/
-void connect_router(void *r_one, void *r_two){
+void connect(void *r_one, void *r_two){
     int n;
 
     /*Connecting two routers*/
     if(*((int*) r_one) == 2 && *((int*) r_two) == 2){
         /*Creates an array of pointers to connections*/
-        ((Router*) r_one)->connections = (host_or_router**) malloc(n * sizeof(host_or_router)); 
-        ((Router*) r_two)->connections = (host_or_router**) malloc(n * sizeof(host_or_router)); 
+        ((Router*) r_one)->connections = (host_or_router*) malloc(n * sizeof(host_or_router)); 
+        ((Router*) r_two)->connections = (host_or_router*) malloc(n * sizeof(host_or_router)); 
 
         /*adding pointers into array*/
-        ((Router*) r_one)->connections[0]->item = (void*) r_two;
-        ((Router*) r_two)->connections[0]->item = (void*) r_one; 
+        ((Router*) r_one)->connections[0].item = (void*) r_two;
+        ((Router*) r_two)->connections[0].item = (void*) r_one; 
     }
     /*Connecting a router and a host*/
     else if(*((int*) r_one) == 1 && *((int*) r_two) == 2){
         /*Creates an array of pointers to connections*/
-        ((Router*) r_two)->connections = (host_or_router**) malloc(n * sizeof(host_or_router)); 
+        ((Router*) r_two)->connections = (host_or_router*) malloc(n * sizeof(host_or_router)); 
 
         /*adding pointers into array*/
         ((Host*) r_one)->address = (Router*) r_two;
-        ((Router*) r_two)->connections[0]->item = (void*) r_one; 
+        ((Router*) r_two)->connections[0].item = (void*) r_one; 
     }
     /*Connecting a host and a router*/
     else if(*((int*) r_one) == 2 && *((int*) r_two) == 1){
         /*Creates an array of pointers to connections*/
-        ((Router*) r_one)->connections = (host_or_router**) malloc(n * sizeof(host_or_router));  
+        ((Router*) r_one)->connections = (host_or_router*) malloc(n * sizeof(host_or_router));  
 
         /*adding pointers into array*/
-        ((Router*) r_one)->connections[0]->item = (void*) r_two;
+        ((Router*) r_one)->connections[0].item = (void*) r_two;
         ((Host*) r_two)->address = (Router*) r_one; 
     }
-    
 }
+
+
 
 int routingtree_create(int n){
     int tree[n][n];
