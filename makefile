@@ -19,8 +19,12 @@ ifeq ($(UNAME), $(UNAME_MAC))
 EXTENTION := .out
 endif
 
-$(TARGET): $(BUILD)main.o
+$(TARGET): main.o conf.o
 	$(CC) $^ -o $@ $(CFLAGS)
 
-$(BUILD)main.o: main.c
+main.o: main.c
 	$(CC) $^ -c -o $@ $(CFLAGS)
+
+conf.o: conf.c
+	$(CC) $^ -c -o $@ $(CFLAGS)
+
