@@ -12,11 +12,9 @@ struct node {
    struct node *next;
 };
 
-struct node *head = NULL;
-struct node *current = NULL;
-
 //display the list
 void printList() {
+   struct node *head = NULL;
    struct node *ptr = head;
    printf("\n[ ");
 	
@@ -31,6 +29,8 @@ void printList() {
 
 //insert link at the first location
 void insertFirst(int key, host_or_router data) {
+   struct node *head = NULL;
+
    //create a link
    struct node *link = (struct node*) malloc(sizeof(struct node));
 	
@@ -46,6 +46,7 @@ void insertFirst(int key, host_or_router data) {
 
 //delete first item
 struct node* deleteFirst() {
+   struct node *head = NULL;
 
    //save reference to first link
    struct node *tempLink = head;
@@ -59,10 +60,13 @@ struct node* deleteFirst() {
 
 //is list empty
 bool isEmpty() {
+   struct node *head = NULL;
    return head == NULL;
 }
 
 int length() {
+   struct node *head = NULL;
+   struct node *current = NULL;
    int length = 0;
    struct node *current;
 	
@@ -74,7 +78,9 @@ int length() {
 }
 
 //find a link with given key
-struct node* find(int key) {
+struct node* find(host_or_router* key) {
+   struct node *head = NULL;
+   struct node *current = NULL;
 
    //start from the first link
    struct node* current = head;
@@ -85,7 +91,7 @@ struct node* find(int key) {
    }
 
    //navigate through list
-   while(current->key != key) {
+   while(current->data != key) {
 	
       //if it is last node
       if(current->next == NULL) {
@@ -102,6 +108,8 @@ struct node* find(int key) {
 
 //delete a link with given key
 struct node* delete(int key) {
+   struct node *head = NULL;
+   struct node *current = NULL;
 
    //start from the first link
    struct node* current = head;
@@ -139,6 +147,8 @@ struct node* delete(int key) {
 }
 /*
 void sort() {
+   struct node *head = NULL;
+   struct node *current = NULL;
 
    int i, j, k, tempKey, tempData;
    struct node *current;
@@ -170,6 +180,8 @@ void sort() {
 }
 */
 void reverse(struct node** head_ref) {
+   struct node *head = NULL;
+   struct node *current = NULL;
    struct node* prev   = NULL;
    struct node* current = *head_ref;
    struct node* next;
