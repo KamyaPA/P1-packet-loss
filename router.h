@@ -1,3 +1,5 @@
+#define INCLUDED_ROUTER_H
+
 typedef struct RoutingTree{
     int i;
 }RoutingTree;
