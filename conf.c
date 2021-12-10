@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "create_function.h"
+#include "list.h"
 
 #define ARGUMENTS 4         /*  The max amount of arguments needed.     */
 #define ADDR_ARGUMENTS 3
@@ -11,21 +13,24 @@
 
 void wrong_command(char *command, int line_nr);
 void arguments_check(int check, int target, int line_nr);
+void router_add(List *network, Router *new);
+void host_add(List *network, Host *new);
 
-void create_network(char *conf_file_path){
+
+void create_network(List *network, char *conf_file_path){
     FILE *file;
     char str[MAX_STR_LN];
     char delim[] = " \n";
     char *command;
     char *arguments[ARGUMENTS];
     int line_nr = 1;
-
+ 
     file = fopen(conf_file_path, "r");      /*  Opens specific file.          */
 
     while (fgets(str, MAX_STR_LN, file)){   /*  Reads a file, line by line.   */
         if(strcmp(str, "\n") != 0){         /*  Is it an empty line           */
             command = strtok(str, delim);
-            if(command[0] != '#'){          /* Is it a commed                 */
+            if(command[0] != '#'){          /*  Is it a commed                */
                 int i = 0;
                 char *argument;
                 while((argument = strtok(NULL, delim))){ /*Load arguments to array*/
@@ -34,19 +39,25 @@ void create_network(char *conf_file_path){
                 }
 
                 if(strcmp(command, "addr") == 0){   /*Add router*/
+                    Router *new = (Router *) malloc (sizeof(Router));
                     int capacity, speed;
                     arguments_check(i, ADDR_ARGUMENTS, line_nr);
                     sscanf(arguments[1],"%d", &capacity);
                     sscanf(arguments[2],"%d", &speed);
-                    printf("ADD: router, name %s, capacity %d, speed %d\n",
-                        arguments[0], capacity, speed);
+                    printf("ADD: router, name %s, speed %d, capacity %d\n",
+                        arguments[0], speed, capacity);
+                    *new = router_create(speed, arguments[0], capacity);
+                    router_add(network, new);
                 }
                 else if(strcmp(command, "addh") == 0){ /*Add host*/
+                    Host *new = (Host *) malloc (sizeof(Host));
                     int speed;
                     arguments_check(i, ADDH_ARGUMENTS, line_nr);
                     sscanf(arguments[1],"%d", &speed);
                     printf("ADD: host, name %s, speed %d\n",
                         arguments[0], speed);
+                    *new = host_create(speed, arguments[0]);
+                    host_add(network, new);
                 }
                 else if(strcmp(command, "conr") == 0){ /*Connect router to router*/
                     int length;
@@ -55,7 +66,7 @@ void create_network(char *conf_file_path){
                     printf("CONNECT: router name %s, router name %s, length %d\n",
                         arguments[0], arguments[1], length);
                 }
-                else if(strcmp(command, "conh") == 0){  /*Connect host to router*/
+                else if(strcmp(command, "conh") == 0){ /*Connect host to router*/
                     int length;
                     arguments_check(i, CONH_ARGUMENTS, line_nr);
                     sscanf(arguments[2],"%d", &length);
@@ -69,7 +80,7 @@ void create_network(char *conf_file_path){
         }
         line_nr++; /*Next line*/
     }
-    fclose(file);   /*  Closes open file.   */
+    fclose(file);   /*Closes open file */
 }
 
 void arguments_check(int check, int target, int line_nr){
@@ -84,4 +95,12 @@ void wrong_command(char *command, int line_nr){
     printf("Wrong command syntax on line %d, got %s\n",
             line_nr, command);
     exit(EXIT_FAILURE);
+}
+
+void router_add(List *network, Router *new){
+    list_add(network, (void *)new);
+}
+
+void host_add(List *network, Host *new){
+    list_add(network, (void *)new);
 }

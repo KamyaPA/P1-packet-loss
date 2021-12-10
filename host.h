@@ -1,3 +1,5 @@
+#define INCLUDED_HOST_H
+
 typedef struct Host{
     int type;
     char *name; 
