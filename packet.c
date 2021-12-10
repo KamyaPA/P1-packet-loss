@@ -1,3 +1,12 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <math.h>
+#include "hostOrRouter.h"
+#include "router.h"
+#include "host.h"
+#include "packet.h"
+
 typedef struct packet{
     int length;
     int id; //(1,2,3...)
@@ -19,7 +28,7 @@ void create_packet(Packet *m)
 }
 
 // creating packets header
-Void create_packet_header(Packet *m, Host *source, Host *destination)
+void create_packet_header(Packet *m, Host *source, Host *destination)
 {
     PacketHeader *mh 
     mh = (PacketHeader*)malloc(sizeof(PacketHeader));
@@ -53,7 +62,7 @@ int check_PacketHeader(PacketHeader *mh, host *source, host *destination)
 }
 
 // Sending packet
-void host_send_packet(PacketHeader *mh, host *source, host *destination, RoutingTree *list)
+void host_send_packet(PacketHeader *mh, Host *source, Host *destination, RoutingTree *list)
 {
     int count, check, packet_lost;
     check = check_PacketHeader(&mh, &source, &destination);
