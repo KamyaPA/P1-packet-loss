@@ -1,19 +1,27 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
 
-#define max_node 100
-#define max_distance 1000000000
-int sum_node, sum_line, node_u, node_v, uv_line, l=0;
-int connect_arr[max_node][max_node],send,receive;
-int distance[max_node],trace[max_node],checkt2[max_node];
-int *router_list;
+// Funktion får file (txt), som konfigurerer netværk
+// og return listetræ i path[100] array og antal router 
+// i listetræ i router_path variabel
+// kald på funktion: list_tree(path, &router_path, text);
 
-void readf()
+int path[100]; // array consists list of the tree
+int router_path; // total router in list of the tree
+char text[]="router.txt"; // network configuration file
+
+int list_tree(int *path, int *router_path, char *file)
 {
+    #define max_node 100 // total nodes
+    #define max_distance 1000000000 // it means that don't connect
+    int sum_node, sum_line, node_u, node_v, uv_line, l=0;
+    int connect_arr[max_node][max_node],send,receive;
+    int distance[max_node],trace[max_node],checkt2[max_node];
+    int *router_list;
+
+    /* Read the file "router.txt" that consists of router and connect between them,
+        sender and receive */
 	FILE *fp;
 	//open file
-	fp=fopen("router.txt", "r");
+	fp=fopen(file, "r");
 	if(fp==NULL)
     {
 		printf(" Error creating or pening file!");
@@ -64,10 +72,8 @@ void readf()
         }
     fclose(fp);
     free(router_list);
-}
 
-void dijkstra()
-{
+    // Dijkstra algorithm
     for(int i=1;i<=sum_node;i++)
     {
         distance[i]=max_distance;
@@ -76,7 +82,8 @@ void dijkstra()
     }
     distance[send]=0;
     trace[send]=0;
-    int node_v=send,fmin;
+    node_v=send;
+    int fmin;
     while(node_v!=receive)
     {
     //find node v
@@ -98,36 +105,34 @@ void dijkstra()
                 trace[i]=node_v;
             }
     }
-}
 
-void output()
-{
+    // Print list tree
     if(distance[receive]==max_distance) printf("NO PATH");
     else
     {
         printf("\n The shortest way: \n");
         printf(" %d km\n", distance[receive]);
-        int path[max_node],d=0;
+        int path1[max_node];
+        int d=0;
+        d=0;
         d++;
-        path[d]=receive;
+        path1[d]=receive;
         while(trace[receive]!=0)
         {
             receive=trace[receive];
             d++;
-            path[d]=receive;
+            path1[d]=receive;
         }
+        *router_path=d;
         printf("\n The routing tree: \n");
-        for(int i=d;i>0;i--)
+        for(int i=0;i<d;i++)
         {
+            path[i]=path1[(d-i)];
             printf(" Router-%d,",path[i]);}
         printf("\n");
         }
 }
 
-int main()
-{
-  readf();
-  dijkstra();
-  output();
-}
+
+
     
