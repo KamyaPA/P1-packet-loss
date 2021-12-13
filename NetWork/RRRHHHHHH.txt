@@ -1,0 +1,17 @@
+addr R1 10000 200
+addr R2 1000 20
+conr R1 R2 5
+addr R3 1000 20
+conr R1 R3 5
+addh H1 10
+conh H1 R3 5
+addh H2 10
+conh H2 R3 5
+addh H3 10
+conh H3 R3 5
+addh H4 10
+conh H4 R2 5
+addh H5 10
+conh H5 R2 5
+addh H6 10
+conh H6 R2 5
