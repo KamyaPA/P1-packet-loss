@@ -1,4 +1,3 @@
-
 CC = gcc
 CLINUXFLAGS =
 CFLAGS = -Wall -pedantic -ansi $(CLINUXFLAGS)
@@ -19,7 +18,7 @@ ifeq ($(UNAME), $(UNAME_MAC))
 EXTENTION := .out
 endif
 
-$(TARGET): main.o conf.o list.o create_function.o
+$(TARGET): main.o conf.o list.o tree.o  create_function.o
 	$(CC) $^ -o $@ $(CFLAGS)
 
 main.o: main.c
@@ -31,6 +30,8 @@ conf.o: conf.c
 list.o: list.c
 	$(CC) $^ -c -o $@ $(CFLAGS)
 
+tree.o: tree.c
+	$(CC) $^ -c -o $@ $(CFLAGS)
 
 create_function.o: create_function.c
 	$(CC) $^ -c -o $@ $(CFLAGS)

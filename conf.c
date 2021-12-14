@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "create_function.h"
-#include "list.h"
+#include "tree.h"
 
 #define ARGUMENTS 4         /*  The max amount of arguments needed.     */
 #define ADDR_ARGUMENTS 3
@@ -13,11 +13,11 @@
 
 void wrong_command(char *command, int line_nr);
 void arguments_check(int check, int target, int line_nr);
-void router_add(List *network, Router *new);
-void host_add(List *network, Host *new);
+void router_add(Btree *network, Router *new);
+void host_add(Btree *network, Host *new);
+int name_compare(const void *, const void *);
 
-
-void create_network(List *network, char *conf_file_path){
+void create_network(Btree *network, char *conf_file_path){
     FILE *file;
     char str[MAX_STR_LN];
     char delim[] = " \n";
@@ -97,10 +97,29 @@ void wrong_command(char *command, int line_nr){
     exit(EXIT_FAILURE);
 }
 
-void router_add(List *network, Router *new){
-    list_add(network, (void *)new);
+void router_add(Btree *network, Router *new){
+    btree_add(network, (void *)new, name_compare);
 }
 
-void host_add(List *network, Host *new){
-    list_add(network, (void *)new);
+void host_add(Btree *network, Host *new){
+    btree_add(network, (void *)new, name_compare);
+}
+
+int name_compare(const void *item1, const void *item2){
+    char *name1;
+    char *name2;
+    if(*((int *)item1) == ROUTER ){
+        name1 = ((Router *)item1)->name;
+    }
+    else{
+        name1 = ((Host *)item1)->name;
+    }
+    
+    if(*((int *)item2) == ROUTER ){
+        name2 = ((Router *)item2)->name;
+    }
+    else{
+        name2 = ((Host *)item2)->name;
+    }
+    return strcmp(name1, name2);
 }
