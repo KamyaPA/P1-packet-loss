@@ -2,7 +2,11 @@
 #include <stdlib.h>
 #include <string.h>
 #include "create_function.h"
-#include "list.h"
+#include "tree.h"
+
+#ifndef INCLUDED_ROUTER_H
+#include "router.h"
+#endif
 
 #define ARGUMENTS 4         /*  The max amount of arguments needed.     */
 #define ADDR_ARGUMENTS 3
@@ -12,15 +16,17 @@
 #define MAX_STR_LN 50       /*  Max length of string.                   */
 
 void wrong_command(char *command, int line_nr);
+void not_defined(char *object, int line_nr);
 void arguments_check(int check, int target, int line_nr);
-void router_add(List *network, Router *new);
-void host_add(List *network, Host *new);
+void router_add(Btree *network, Router *new);
+void host_add(Btree *network, Host *new);
+int name_compare(const void *, const void *);
+int find_compare(const void * tree, const void * item);
 
-
-void create_network(List *network, char *conf_file_path){
+void create_network(Btree *network, char *conf_file_path){
     FILE *file;
     char str[MAX_STR_LN];
-    char delim[] = " \n";
+    char delim[] = " \n";                   /*Delimiters in strtok*/
     char *command;
     char *arguments[ARGUMENTS];
     int line_nr = 1;
@@ -61,17 +67,35 @@ void create_network(List *network, char *conf_file_path){
                 }
                 else if(strcmp(command, "conr") == 0){ /*Connect router to router*/
                     int length;
+                    void *r1, *r2;
                     arguments_check(i, CONR_ARGUMENTS, line_nr);
                     sscanf(arguments[2],"%d", &length);
                     printf("CONNECT: router name %s, router name %s, length %d\n",
                         arguments[0], arguments[1], length);
-                }
+                    
+                    r1 = btree_find(network, arguments[0], find_compare);
+                    if(r1 == NULL){
+                        not_defined(arguments[0], line_nr);
+                    }
+
+                    r2 = btree_find(network, arguments[1], find_compare);
+                    if(r2 == NULL){
+                        not_defined(arguments[1], line_nr);
+                    }
+
+                    connect(r1, r2);
+                }    
                 else if(strcmp(command, "conh") == 0){ /*Connect host to router*/
                     int length;
+                    void *host, *router;
                     arguments_check(i, CONH_ARGUMENTS, line_nr);
                     sscanf(arguments[2],"%d", &length);
                     printf("CONNECT: host name %s, router name %s, length %d\n",
                         arguments[0], arguments[1], length);
+                    host = btree_find(network, arguments[0], find_compare);
+                    router = btree_find(network, arguments[1], find_compare);
+
+                    connect(host, router);
                 }
                 else{                                  /*Error*/
                     wrong_command(command, line_nr);
@@ -97,10 +121,40 @@ void wrong_command(char *command, int line_nr){
     exit(EXIT_FAILURE);
 }
 
-void router_add(List *network, Router *new){
-    list_add(network, (void *)new);
+void not_defined(char *object, int line_nr){
+    printf("Objeckt \"%s\" not defined on line %d\n", object, line_nr);
+    exit(EXIT_FAILURE); 
 }
 
-void host_add(List *network, Host *new){
-    list_add(network, (void *)new);
+void router_add(Btree *network, Router *new){
+    btree_add(network, (void *)new, name_compare);
+}
+
+void host_add(Btree *network, Host *new){
+    btree_add(network, (void *)new, name_compare);
+}
+
+int name_compare(const void *item1, const void *item2){
+    char *name1;
+    char *name2;
+    if(*((int *)item1) == ROUTER ){
+        name1 = ((Router *)item1)->name;
+    }
+    else{
+        name1 = ((Host *)item1)->name;
+    }
+    
+    if(*((int *)item2) == ROUTER ){
+        name2 = ((Router *)item2)->name;
+    }
+    else{
+        name2 = ((Host *)item2)->name;
+    }
+    return strcmp(name1, name2);
+}
+
+int find_compare(const void * tree, const void * item){
+    char *tree_name;
+    tree_name = *(int *)tree == ROUTER ? ((Router *)tree)->name : ((Host *)tree)->name;
+    return strcmp(tree_name, (char *)item);
 }

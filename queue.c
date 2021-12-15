@@ -3,7 +3,6 @@
 #include "list.h"
 #include "queue.h"
 
-/*Queue is a first in first out. Adding an item puts it in the back of the queue, removing an item takes the first element out.*/
 Queue create_queue(){
     Queue new;
     new.list = NULL;

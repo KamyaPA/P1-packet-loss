@@ -16,17 +16,10 @@ typedef struct Queue{
 } Queue;
 
 typedef struct Router{
-<<<<<<< Updated upstream
-    int type;
-    char *name;
-    struct Router *id; /*Pointer to it self*/
-    struct List connections; /*Pointer to a collection of routers*/
-=======
     int type; //type of router is represented as an int. For routers, their type is 2.
     char *name;
     struct Router *id; //Pointer to itself
     struct List connections; //List of connections
->>>>>>> Stashed changes
     unsigned int speed;
     RoutingTree *tree;
     Queue queue;
@@ -37,3 +30,5 @@ typedef struct Edge{
     void *connection;
 }Edge
 
+/*Prototype*/
+void connect(void *r_one, void *r_two);
