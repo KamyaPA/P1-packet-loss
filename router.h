@@ -25,6 +25,10 @@ typedef struct Router{
     Queue queue;
 } Router;
 
+typedef struct Edge{
+    int length;
+    void *connection;
+}Edge
+
 /*Prototype*/
 void connect(void *r_one, void *r_two);
-

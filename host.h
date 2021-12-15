@@ -1,4 +1,5 @@
 #define INCLUDED_HOST_H
+#include "router.h"
 
 typedef struct Host{
     int type; //Type is represented as an int. For Hosts, their type is 1.
@@ -7,5 +8,6 @@ typedef struct Host{
     unsigned int speed;
     char *Send;
     char *Receive;
-    struct Router *address; //Hosts are only connected to one Router. 
+    struct Edge *address; //Hosts have an Edge to a router. Edge is in router.h
 }Host;
+
