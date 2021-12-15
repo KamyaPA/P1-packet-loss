@@ -2,7 +2,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
-#include "hostOrRouter.h"
 #include "router.h"
 #include "host.h"
 #include "packet.h"
