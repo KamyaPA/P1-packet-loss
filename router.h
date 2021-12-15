@@ -16,10 +16,10 @@ typedef struct Queue{
 } Queue;
 
 typedef struct Router{
-    int type;
+    int type; 
     char *name;
-    struct Router *id; /*Pointer to it self*/
-    struct List connections; /*Pointer to a collection of routers*/
+    struct Router *id; //Pointer to itself
+    struct List connections; //List of connections
     unsigned int speed;
     RoutingTree *tree;
     Queue queue;
