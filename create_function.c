@@ -7,8 +7,9 @@
 
 // Speed, name and capacity(length of queue) will be input parameters along with a router struct
 
-Router router_create(Router R, unsigned int speed_of_router, char *name_of_router, int length_of_queue, char *start_point, char *read_data, char *write_data){
+Router router_create(unsigned int speed_of_router, char *name_of_router, int length_of_queue, char *start_point, char *read_data, char *write_data){
 
+Router R;
 R.name = *name_of_router;
 R.id = &R;
 R.speed = speed_of_router;
@@ -23,8 +24,9 @@ return(R);
 
 // Speed, name, send, receive and router variabel of router struct will be input parameters
 
-Host host_create(Host H, unsigned int speed_of_host, char *name_of_host, char *send, char *receive, Router R){
+Host host_create(unsigned int speed_of_host, char *name_of_host, char *send, char *receive, Router R){
 
+Host H;
 H.name = *name_of_host;
 H.id = &H;
 H.speed = speed_of_host;
@@ -34,3 +36,5 @@ H.address->id = &R;
 
 return(H);
 }
+
+
