@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "tree.h"
+#include "router.h"
 
 Btree btree_create(){
     Btree new;
@@ -11,12 +12,12 @@ Btree btree_create(){
 }
 
 void btree_add(Btree *tree, void * item, int (*compare)(const void *, const void *)){ 
-    Btree **active;
     if(tree->item == NULL){
         tree->item = item;
     }
     else{
-        if(compare(tree->item, item) > 1){
+        Btree **active;
+        if(compare(tree->item, item) > 0){
             active = &(tree->greater);
         }
         else{
