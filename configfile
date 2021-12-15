@@ -1,0 +1,72 @@
+#The center router
+addr Center 1000 5
+
+#Outer Routers
+addr Top 500 8
+conr Center North1 10
+
+addr TopRight 500 8
+conr Center TopRight 10
+
+addr BottomRight 500 8
+conr Center BottomRight 10
+
+addr Bottom 500 8
+conr Center Bottom 10 
+
+addr BottomLeft 500 8
+conr Center BottomLeft 10
+
+addr TopLeft 500 8
+conr Conter TopLeft 10
+
+#Inner Routers
+addr InnerTopLeft 1000 10
+conr InnerTopLeft Top 10
+conr InnerTopLeft TopLeft 10
+
+addr InnerTopRight 1000 10
+conr InnerTopRight InnerTopLeft 10
+conr InnerTopRight Top 10
+conr InnerTopRight TopRight 10
+
+addr InnerRight 1000 10
+conr InnerRight InnerTopRight 10
+conr InnerRight TopRight 10
+conr InnerRight BottomRight 10
+
+addr InnerBottomRight 1000 10
+conr InnerBottomRight InnerLeft 10
+conr InnerBottomRight BottomRight 10
+conr InnerBottomRight Bottom 10
+
+addr InnerBottomLeft 1000 10
+conr InnerBottomLeft InnerBottomRight 10
+conr InnerBottomLeft Bottom 10
+conr InnerBottomLeft BottomLeft 10
+
+addr InnerLeft 1000 10
+conr InnerLeft InnerBottomLeft 10
+conr InnerLeft InnerTopLeft 10
+conr InnerLeft BottomLeft 10
+conr InnerLeft TopLeft 10
+
+#Hosts
+addh h_TopLeft 5
+conh h_TopLeft TopLeft 10
+
+addh h_Top 5
+conh h_Top Top 10
+
+addh h_TopRight 5
+conh h_TopRight TopRight 10
+
+addh h_BottomRight 5
+conh h_BottomRight BottomRight 10
+
+addh h_Bottom 5
+conh h_Bottom Bottom 10
+
+addh h_BottomLeft 5
+conh h_BottomLeft BottomLeft 10
+
