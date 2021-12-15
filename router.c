@@ -10,20 +10,11 @@
 #include "list.h"
 #endif
 
-
-/*Prototype*/
-void connect(void *r_one, void *r_two);
-
-
 /*Functions*/
 void connect(void *r_one, void *r_two){
-    int n;
-
     /*Connecting two routers*/
     if(*((int*) r_one) == 2 && *((int*) r_two) == 2){
-        /*Creates an array of pointers to connections*/
-        void *p1 =  malloc(sizeof(void*)); 
-        void *p2 =  malloc(sizeof(void*));
+        /*Creates an array of pointers to connections*/ 
 
         /*adding pointers into array*/
         list_add(&(((Router*) r_one)->connections), r_two);

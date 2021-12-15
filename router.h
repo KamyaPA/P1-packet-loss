@@ -24,3 +24,7 @@ typedef struct Router{
     RoutingTree *tree;
     Queue queue;
 } Router;
+
+/*Prototype*/
+void connect(void *r_one, void *r_two);
+
