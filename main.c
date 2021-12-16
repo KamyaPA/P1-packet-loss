@@ -56,11 +56,6 @@ int main(int argc, char *argv[]){
 }
 
 
-int find_compare(const void * tree, const void * item){
-    char *tree_name;
-    tree_name = *(int *)tree == ROUTER ? ((Router *)tree)->name : ((Host *)tree)->name;
-    return strcmp(tree_name, (char *)item);
-}
 
 void run(List network, int delay){
     int tick = 0;

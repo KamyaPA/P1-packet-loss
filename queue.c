@@ -3,15 +3,15 @@
 #include "list.h"
 #include "queue.h"
 
-Queue create_queue(){
-    Queue new;
+SimpleQueue create_queue(){
+    SimpleQueue new;
     new.list = NULL;
     new.length = 0;
     return new;
 }
 
 /*Puts an item in the back of the queue*/
-void queue_add(Queue *queue, void *item){
+void queue_add(SimpleQueue *queue, void *item){
     //Allocates memory to the item in the queue
     Item *new = (Item *) malloc(sizeof(Item));
     new->item = item;
@@ -31,7 +31,7 @@ void queue_add(Queue *queue, void *item){
 }
 
 /*Removes the first item in the queue and returns a void pointer to it.*/
-void* queue_remove(Queue *queue, void *item){
+void* queue_remove(SimpleQueue *queue, void *item){
     //Checks is the queue is empty. If its empty, it will write so in the terminal
     if(queue->list->first == NULL){
         char str[] = "Tried to remove an element from an empty queue";

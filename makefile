@@ -1,6 +1,6 @@
 CC = gcc
 CLINUXFLAGS =
-CFLAGS = -Wall -pedantic -ansi $(CLINUXFLAGS)
+CFLAGS = -Wall -pedantic $(CLINUXFLAGS)
 EXTENTION = .exe
 TARGET = a$(EXTENTION)
 UNAME := $(shell uname)
