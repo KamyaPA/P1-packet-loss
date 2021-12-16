@@ -4,6 +4,9 @@
     #include "list.h"
 #endif
 
+#ifndef INCLUDED_ROUTINGTREE_H
+    #include "routing_tree.h"
+#endif
 
 typedef struct Queue{
     int length;
@@ -18,7 +21,7 @@ typedef struct Router{
     struct Router *id; //Pointer to itself
     struct List connections; //List of connections
     unsigned int speed;
-    /*RoutingTree *tree;*/
+    RtreeItem *routing_tree;
     Queue queue;
 } Router;
 

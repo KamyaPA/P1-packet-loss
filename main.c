@@ -36,15 +36,15 @@
 int find_compare(const void * tree, const void * item);
 
 int main(int argc, char *argv[]){
-    double delay;
+    /*double delay;*/
     Btree network = btree_create();
-    Item *active;
+    /*Item *active;*/
     if(argc < 2){
         printf("To few arguments\n");
         return 0;
     }
     create_network(&network, argv[1]);
-
+/*
     printf("\n ===TEST_PRINT=== \n");
     if(btree_find(&network, (void *)"h_BottoamLeft", find_compare)){
         printf("FOUND\n");
@@ -52,7 +52,8 @@ int main(int argc, char *argv[]){
     else{
         printf("Does not exist\n");
     }
-    run(network, 50);
+    */
+    /*run(network, 50);*/
 }
 
 
