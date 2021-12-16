@@ -4,9 +4,6 @@
     #include "list.h"
 #endif
 
-typedef struct RoutingTree{
-    int i;
-}RoutingTree;
 
 typedef struct Queue{
     int length;
@@ -21,14 +18,14 @@ typedef struct Router{
     struct Router *id; //Pointer to itself
     struct List connections; //List of connections
     unsigned int speed;
-    RoutingTree *tree;
+    /*RoutingTree *tree;*/
     Queue queue;
 } Router;
 
 typedef struct Edge{
     int length;
     void *connection;
-}Edge
+}Edge;
 
 /*Prototype*/
-void connect(void *r_one, void *r_two);
+void connect(void *r_one, void *r_two, int length);

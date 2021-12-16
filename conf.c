@@ -83,7 +83,7 @@ void create_network(Btree *network, char *conf_file_path){
                         not_defined(arguments[1], line_nr);
                     }
 
-                    connect(r1, r2);
+                    connect(r1, r2, length);
                 }    
                 else if(strcmp(command, "conh") == 0){ /*Connect host to router*/
                     int length;
@@ -95,7 +95,7 @@ void create_network(Btree *network, char *conf_file_path){
                     host = btree_find(network, arguments[0], find_compare);
                     router = btree_find(network, arguments[1], find_compare);
 
-                    connect(host, router);
+                    connect(host, router, length);
                 }
                 else{                                  /*Error*/
                     wrong_command(command, line_nr);

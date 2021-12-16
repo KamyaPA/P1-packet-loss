@@ -1,5 +1,7 @@
 #define INCLUDED_HOST_H
-#include "router.h"
+#ifndef INCLUDED_ROUTER_H
+    #include "router.h"
+#endif
 
 typedef struct Host{
     int type; //Type is represented as an int. For Hosts, their type is 1.
