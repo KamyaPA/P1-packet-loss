@@ -43,3 +43,5 @@ Host host_create(unsigned int speed_of_host, char *name_of_host){
     H.Receive = (char *) malloc (sizeof(PacketHeader) + 255);
     return(H);
 }
+
+
