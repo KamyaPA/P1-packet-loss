@@ -7,6 +7,9 @@
 *.obj
 *.elf
 
+# Tempoary files
+*.tmp
+
 # Linker output
 *.ilk
 *.map

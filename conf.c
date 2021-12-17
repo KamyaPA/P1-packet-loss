@@ -196,7 +196,7 @@ void create_network(Btree *network, char *conf_file_path){
                 desination = router_index; /* Important for a 1 distance network */
 
                 if(active_router->routing_tree == NULL){ /*Allocate space for the routing tree*/
-                    active_router->routing_tree = (RtreeItem *) malloc (network_nodes * sizeof(RtreeItem) - 1);
+                    active_router->routing_tree = (RtreeItem *) calloc (sizeof(RtreeItem), network_nodes - 1);
                     if(active_router->routing_tree == NULL){
                        printf("Couldn't allocate the space for malloc");
                       exit(1); 
