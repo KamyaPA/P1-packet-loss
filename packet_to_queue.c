@@ -142,7 +142,7 @@ int space_left(Router *R){
       return R->queue.read - R->queue.write;
    }
    else if(R->queue.read < R->queue.write){
-      return R->queue.length - (R->queue.write - R->queue.read)
+      return R->queue.length - (R->queue.write - R->queue.read);
    }
    else{
       return R->queue.length;
