@@ -11,6 +11,7 @@ Router router_create(unsigned int speed_of_router, char *name_of_router, int len
 Host host_create(unsigned int speed_of_host, char *name_of_host, char *send, char *receive, Router R);
 void put_in_queue(Router R, PacketHeader P, int if_first);
 char get_from_queue(Router R, int if_first);
+int space_left(Router *R);
 
 
 int main(void){
@@ -54,7 +55,6 @@ Router router_create(unsigned int speed_of_router, char *name_of_router, int len
     return(R);
 }
 
-// Speed, name, send, receive and router variabel of router struct will be input parameters
 
 Host host_create(unsigned int speed_of_host, char *name_of_host){
     Host H;
@@ -68,6 +68,7 @@ Host host_create(unsigned int speed_of_host, char *name_of_host){
     return(H);
 }
 
+/*
 void put_in_queue(Router R, PacketHeader *P){
 
    char *pack_size = P;
@@ -91,8 +92,10 @@ char get_from_queue(Router R){
    
 return pack_size;
 }
+*/
 
 int send(Router *from, Router *to){
+   int return_val;
    char * PH = malloc(sizeof(PacketHeader));
    char * Packet;
    for(int i =0; i < sizeof(PacketHeader); i++){
