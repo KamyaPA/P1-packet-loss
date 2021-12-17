@@ -33,6 +33,10 @@
 #ifndef INCLUDED_TREE_H
     #include "tree.h"
 #endif
+
+#ifndef INCLUDED_PACKET_H
+    #include "packet.h"
+#endif
 int find_compare(const void * tree, const void * item);
 
 int main(int argc, char *argv[]){
@@ -84,6 +88,29 @@ void run(List network, int delay){
         tick++;
     }
 }
+
+void action_router(Router *source){
+    void *destination;
+    int i;
+    /*Is the queue empty*/
+    if(source->queue.read != source->queue.write){
+        /*Get destination*/
+        destination = ((PacketHeader *)source->queue.read)->destination_address;
+        
+        /*Find next spot*/
+        while(1){
+            for(i = 0; source->routing_tree[i].node == destination; i++);
+            if((void *) source == source->routing_tree[i].node_before){
+                break;
+            }
+            else{
+                destination = source->routing_tree[i].node_before;
+            }
+        }
+        send(source, destination);
+    }
+}
+
 /*
 loop_opjects(List *network, int tick){
     void *active = network->first;
