@@ -29,7 +29,7 @@ void create_packet(Packet *m)
 // creating packets header
 void create_packet_header(Packet *m, Host *source, Host *destination)
 {
-    PacketHeader *mh 
+    PacketHeader *mh; 
     mh = (PacketHeader*)malloc(sizeof(PacketHeader));
     if(m==NULL)
     {   printf(" Coundn't provide memory");

@@ -4,9 +4,15 @@
 #include <math.h>
 #include "router.h"
 #include "host.h"
+
 #ifndef INCLUDED_LIST_H
 #include "list.h"
 #endif
+
+#ifndef INCLUDED_CREATE_FUNCTION_H
+#include "create_function.h"
+#endif
+
 #define GET_CONNECTION_LIST(X) &(((Router*) X)->connections)
 #define GET_TYPE(X) *((int*) X)
 
@@ -37,23 +43,23 @@ void connect(void *r1, void *r2, int length){
 
 
     //connects two routers.
-    if(GET_TYPE(r1) == 2 && GET_TYPE(r2) == 2){
+    if(GET_TYPE(r1) == ROUTER && GET_TYPE(r2) == ROUTER){
         //adds a pointer to each other in their connections list
         list_add(GET_CONNECTION_LIST(r1), r_two);
         list_add(GET_CONNECTION_LIST(r2), r_one); 
     }
     
     //connects a router and a host
-    else if(GET_TYPE(r1) == 1 && GET_TYPE(r2) == 2){
+    else if(GET_TYPE(r1) == HOST && GET_TYPE(r2) == ROUTER){
         //adds a pointer to the host in the routers connections list, sets the hosts address to its router.
-        ((Host*) r_one)->address = (Edge*) r_two;
+        ((Host*) r1)->address = r_two;
         list_add(GET_CONNECTION_LIST(r2), r_one);
     }
 
     //connects a host and a router. (The function doesnt care if you call connect(Host,Router) or connect(Router, Host))
-    else if(GET_TYPE(r1) == 2 && GET_TYPE(r2) == 1){
+    else if(GET_TYPE(r1) == ROUTER && GET_TYPE(r2) == HOST){
         //adds a pointer to the host in the routers connections list, sets the hosts address to its router.
         list_add(GET_CONNECTION_LIST(r1), r_two);
-        ((Host*) r_two)->address = (Edge*) r_one; 
+        ((Host*) r2)->address = r_one; 
     }
 }

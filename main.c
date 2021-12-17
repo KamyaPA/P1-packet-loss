@@ -33,18 +33,25 @@
 #ifndef INCLUDED_TREE_H
     #include "tree.h"
 #endif
+
+#ifndef INCLUDED_PACKET_H
+    #include "packet.h"
+#endif
+#include "packet_to_queue.h"
+
+#define PACKET_REACHED_DESTINATION 2
 int find_compare(const void * tree, const void * item);
 
 int main(int argc, char *argv[]){
-    double delay;
+    /*double delay;*/
     Btree network = btree_create();
-    Item *active;
+    /*Item *active;*/
     if(argc < 2){
         printf("To few arguments\n");
         return 0;
     }
     create_network(&network, argv[1]);
-
+/*
     printf("\n ===TEST_PRINT=== \n");
     if(btree_find(&network, (void *)"h_BottoamLeft", find_compare)){
         printf("FOUND\n");
@@ -52,7 +59,8 @@ int main(int argc, char *argv[]){
     else{
         printf("Does not exist\n");
     }
-    run(network, 50);
+    */
+    /*run(network, 50);*/
 }
 
 
@@ -75,13 +83,52 @@ void run(List network, int delay){
         dif = difftime (end,start);
 
         //adds a delay so we can control the speed of the program without affecting traffic. 
-        if(dif<(delay)/1000){
+        if(dif < (delay)/1000){
             sleep(delay/1000-dif);
-        } 
+        }
 
         //adds 1 to the tick counter.
         tick++;
     }
+}
+
+int action_router(Router *source){
+    void *destination;
+    int i;
+    int result = 1;
+    /*Is the queue empty*/
+    if(source->queue.read != source->queue.write){
+        /*Get destination*/
+        destination = ((PacketHeader *)source->queue.read)->destination_address;
+        
+        /*Find next spot*/
+        while(1){
+            for(i = 0; source->routing_tree[i].node == destination; i++);
+            if((void *) source == source->routing_tree[i].node_before){
+                break;
+            }
+            else{
+                destination = source->routing_tree[i].node_before;
+            }
+        }
+        /*Send a packet*/
+
+        if(*(int *)destination == HOST){
+            /*Router to host*/
+            send_to_host(source, (Host *)destination);
+            result = PACKET_REACHED_DESTINATION;
+        }
+        else{
+            /*Rotuer to Rotuer*/
+            reslut = send(source, (Router *)destination);
+        }
+    }
+    return reslut;
+}
+
+int action_host(Host *source){
+    create_packet(*source, *source, source->Send, 68);
+    return = send_to_router(source, source->address->connection) == 0
 }
 /*
 loop_opjects(List *network, int tick){

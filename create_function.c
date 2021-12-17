@@ -6,6 +6,9 @@
 #include "host.h"
 #include "packet.h"
 #include "create_function.h"
+#ifndef INCLUDED_LIST_H
+    #include "list.h"
+#endif
 
 /* Speed, name and capacity(length of queue) will be input parameters along with a router struct*/
 
@@ -16,11 +19,13 @@ Router router_create(unsigned int speed_of_router, char *name_of_router, int len
     strcpy(R.name, name_of_router);
     R.id = &R;
     R.speed = speed_of_router;
-    /*R.tree =*/ 
+    R.routing_tree = NULL; 
     R.queue.length = length_of_queue;
     R.queue.start = (char *) malloc (length_of_queue);
     R.queue.read = R.queue.start;
     R.queue.write = R.queue.start;
+
+    R.connections = create_list();
 
     return(R);
 }
@@ -38,3 +43,5 @@ Host host_create(unsigned int speed_of_host, char *name_of_host){
     H.Receive = (char *) malloc (sizeof(PacketHeader) + 255);
     return(H);
 }
+
+
