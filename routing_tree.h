@@ -2,7 +2,7 @@
 
 typedef struct RtreeItem{
     void *node;
-    struct RtreeItem *node_before;
+    void *node_before;
 } RtreeItem;
 
 
