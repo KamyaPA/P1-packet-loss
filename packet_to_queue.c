@@ -6,24 +6,26 @@
 #include "host.h"
 #include "packet.h"
 #include "create_function.h"
-PacketHeader create_packet(Host H1, Host H2);
-Router router_create(unsigned int speed_of_router, char *name_of_router, int length_of_queue, char *start_point, char *read_data, char *write_data);
-Host host_create(unsigned int speed_of_host, char *name_of_host, char *send, char *receive, Router R);
 int send(Router *from, Router *to);
 int space_left(Router *R);
 
 
 
 PacketHeader create_packet(Host H1, Host H2, void* where, int size_of_packet){
+    PacketHeader P;
+    int i;
 
-   PacketHeader P;
+    P.hop_limit = 255u; // number can be changed
+    P.source_address = (Host *)(H1.address->connection);
+    P.destination_address = (Host *)(H2.address->connection);
+    P.payload_length = (size_of_packet) - sizeof(PacketHeader);
 
-   P.hop_limit = 255; // number can be changed
-   P.source_address = H1.address;
-   P.destination_address = H2.address;
-   P.payload_length = (size_of_packet) - sizeof(PacketHeader);
+    *((PacketHeader *)where) = P;
+    for(i = 0; i < P.payload_length; i++){
+        *((char *)where + sizeof(PacketHeader) + i) = '\0';
+    }
 
-   return(P);
+    return(P);
 }
 
 
@@ -38,7 +40,6 @@ int send(Router *from, Router *to){
          from->queue.read = from->queue.start;
       }
    }
-   (PacketHeader*)PH;
    int length = ((PacketHeader *)PH)->payload_length;
    Packet = malloc(sizeof(length));
    for(int i =0; i < length; i++){
@@ -70,6 +71,48 @@ int send(Router *from, Router *to){
    free(Packet);
    return return_val;
 }
+
+int send_to_router(Host *from, Router *to){
+    PacketHeader *header = (PacketHeader *)(from->Send);
+    int length = sizeof(PacketHeader) + header->payload_length;
+    int i;
+    if(length < space_left(to)){
+        for(int i = 0; i < length; i++){
+            *(to->queue.write++) = from->Send[i];
+            if(to->queue.write - to->queue.start > to->queue.length){
+                to->queue.write = to->queue.start;
+            }
+        }
+        return 1;
+    }
+    else{
+        return 0;
+    }
+}
+
+int send_to_host(Router *from, Host *to){
+    PacketHeader header;
+    int i;
+    /*Get the header*/
+    for(i = 0; i < sizeof(PacketHeader); i++){
+        ((char *)&header)[i] = *(from->queue.read++);
+        if(from->queue.read - from->queue.start > from->queue.length){
+            from->queue.read = from->queue.start;
+        }
+    }
+    *((PacketHeader *)to->Receive) = header;
+    /*Get the rest*/
+    for(i = 0; i <  header.payload_length; i++){ 
+        to->Send[i + sizeof(PacketHeader)] = *(from->queue.read++);
+        if(from->queue.read - from->queue.start > from->queue.length){
+            from->queue.read = from->queue.start;
+        }
+    }
+    return 1;
+}
+
+
+
 int space_left(Router *R){
    if(R->queue.read > R->queue.write){
       return R->queue.read - R->queue.write;

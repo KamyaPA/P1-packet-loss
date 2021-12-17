@@ -37,6 +37,9 @@
 #ifndef INCLUDED_PACKET_H
     #include "packet.h"
 #endif
+#include "packet_to_queue.h"
+
+#define PACKET_REACHED_DESTINATION 2
 int find_compare(const void * tree, const void * item);
 
 int main(int argc, char *argv[]){
@@ -80,18 +83,19 @@ void run(List network, int delay){
         dif = difftime (end,start);
 
         //adds a delay so we can control the speed of the program without affecting traffic. 
-        if(dif<(delay)/1000){
+        if(dif < (delay)/1000){
             sleep(delay/1000-dif);
-        } 
+        }
 
         //adds 1 to the tick counter.
         tick++;
     }
 }
 
-void action_router(Router *source){
+int action_router(Router *source){
     void *destination;
     int i;
+    int result = 1;
     /*Is the queue empty*/
     if(source->queue.read != source->queue.write){
         /*Get destination*/
@@ -107,10 +111,25 @@ void action_router(Router *source){
                 destination = source->routing_tree[i].node_before;
             }
         }
-        send(source, destination);
+        /*Send a packet*/
+
+        if(*(int *)destination == HOST){
+            /*Router to host*/
+            send_to_host(source, (Host *)destination);
+            result = PACKET_REACHED_DESTINATION;
+        }
+        else{
+            /*Rotuer to Rotuer*/
+            reslut = send(source, (Router *)destination);
+        }
     }
+    return reslut;
 }
 
+int action_host(Host *source){
+    create_packet(*source, *source, source->Send, 68);
+    return = send_to_router(source, source->address->connection) == 0
+}
 /*
 loop_opjects(List *network, int tick){
     void *active = network->first;
