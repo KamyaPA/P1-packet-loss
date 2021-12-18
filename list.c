@@ -12,6 +12,7 @@ List create_list(){
 void list_add(List *list, void *item){
     Item *new = (Item *) malloc (sizeof(Item));
     new->item = item;
+    new->next = NULL;
     if(list->length == 0){
         list->first = new;
     }

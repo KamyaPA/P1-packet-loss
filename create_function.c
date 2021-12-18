@@ -17,7 +17,6 @@ Router router_create(unsigned int speed_of_router, char *name_of_router, int len
     R.type = ROUTER;
     R.name = (char *) malloc (strlen(name_of_router));
     strcpy(R.name, name_of_router);
-    R.id = &R;
     R.speed = speed_of_router;
     R.routing_tree = NULL; 
     R.queue.length = length_of_queue;
@@ -37,7 +36,6 @@ Host host_create(unsigned int speed_of_host, char *name_of_host){
     H.type = HOST;
     H.name = (char *) malloc (strlen(name_of_host));
     strcpy(H.name, name_of_host);
-    H.id = &H;
     H.speed = speed_of_host;
     H.Send = (char *) malloc (sizeof(PacketHeader) + 255);
     H.Receive = (char *) malloc (sizeof(PacketHeader) + 255);

@@ -7,7 +7,7 @@ UNAME := $(shell uname)
 UNAME_MAC := Darwin
 UNAME_LINUX := Linux
 
-FILES :=  main.o conf.o list.o tree.o create_function.o router.o routing_tree.o
+FILES :=  main.o conf.o list.o tree.o create_function.o router.o routing_tree.o packet_to_queue.o
 
 
 BUILD := build/

@@ -33,12 +33,10 @@ int list_tree(char *read_file, char *save_file)
             for(int i=1;i<=sum_node;i++)
                 for(int j=1;j<=sum_node;j++) connect_arr[i][j]=0;
             router_list = (int*)malloc(sum_node*sizeof(int));
-            printf("\n The list of nodes: \n");   
             for(int i=0; i<sum_node; i++)
             {
                 int j=i+1;
                 router_list[i]=j;
-                printf(" Node-%d\n", router_list[i]);
             }
             l++;
         }
@@ -48,18 +46,6 @@ int list_tree(char *read_file, char *save_file)
             connect_arr[node_u][node_v]=uv_line;
             connect_arr[node_v][node_u]=connect_arr[node_u][node_v];
         }
-    }
-    printf("\n Conneting array between nodes: \n");
-    printf("   ");
-    for(int i=0; i<sum_node; i++) 
-        printf(" %4d", router_list[i]);
-    printf("\n");
-    for(int i=1;i<=sum_node;i++)
-    {
-        printf(" %2d", router_list[i-1]);
-        for(int j=1;j<=sum_node;j++)
-            printf(" %4d", connect_arr[i][j]);
-        printf("\n");
     }
     fclose(fp);
     free(router_list);
@@ -107,8 +93,6 @@ int list_tree(char *read_file, char *save_file)
                 else
                 {
                     if(i!=j){
-                        printf("\n The shortest path from node %d to node %d:", send, receive);
-                        printf(" %d km\n", distance[receive]);
                         int path1[max_node];
                         int d=0;
                         d++;
@@ -120,17 +104,13 @@ int list_tree(char *read_file, char *save_file)
                             path1[d]=receive;
                         }
                         *router_path=d;
-                        printf("\n Total nodes in the path: %d\n", *router_path);
-                        printf("\n The routing tree: "); // print to screen
                         for(int i=0;i<d;i++)
                         {
                             path[i]=path1[(d-i)];
-                            printf(" Node-%d,",path[i]); // print to file
                             fprintf(p, "%d ", path[i]);
                         }
                         fprintf(p, "\n");
                     }
-                    printf("\n");
                 }
             }
         }

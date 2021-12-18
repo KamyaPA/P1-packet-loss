@@ -14,15 +14,15 @@ int space_left(Router *R);
 PacketHeader create_packet(Host H1, Host H2, void* where, int size_of_packet){
     PacketHeader P;
     int i;
-
-    P.hop_limit = 255u; // number can be changed
-    P.source_address = (Host *)(H1.address->connection);
-    P.destination_address = (Host *)(H2.address->connection);
+    
+    P.hop_limit = -1; // number can be changed
+    P.source_address = H1.id;
+    P.destination_address = H2.id;
     P.payload_length = (size_of_packet) - sizeof(PacketHeader);
 
     *((PacketHeader *)where) = P;
     for(i = 0; i < P.payload_length; i++){
-        *((char *)where + sizeof(PacketHeader) + i) = '\0';
+        *(((char *)where) + sizeof(PacketHeader) + i) = '\0';
     }
 
     return(P);
@@ -77,7 +77,7 @@ int send_to_router(Host *from, Router *to){
     int length = sizeof(PacketHeader) + header->payload_length;
     int i;
     if(length < space_left(to)){
-        for(int i = 0; i < length; i++){
+        for(i = 0; i < length; i++){
             *(to->queue.write++) = from->Send[i];
             if(to->queue.write - to->queue.start > to->queue.length){
                 to->queue.write = to->queue.start;

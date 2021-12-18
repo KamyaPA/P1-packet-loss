@@ -41,54 +41,73 @@
 
 #define PACKET_REACHED_DESTINATION 2
 int find_compare(const void * tree, const void * item);
+void run(Btree *network, int delay, int max_tick, char *output, int output_rate);
+int loop_opjects(Btree *network, List *all_hosts, int tick);
+int action_router(Router *source);
+int action_host(Host *source, List *all_hosts);
+void get_hosts(Btree *network, List *hosts);
 
-int main(int argc, char *argv[]){
+/* argv[1] config-file,
+ * argv[2] output-file
+ * argv[3] hwo many ticks
+ * argv[4] ouput how often
+ */
+int main(int argc, char *argv[]){ 
     /*double delay;*/
     Btree network = btree_create();
     /*Item *active;*/
-    if(argc < 2){
+    if(argc < 5){
         printf("To few arguments\n");
         return 0;
     }
+    srand(time(NULL));
     create_network(&network, argv[1]);
-/*
-    printf("\n ===TEST_PRINT=== \n");
-    if(btree_find(&network, (void *)"h_BottoamLeft", find_compare)){
-        printf("FOUND\n");
-    }
-    else{
-        printf("Does not exist\n");
-    }
-    */
-    /*run(network, 50);*/
+    run(&network, 0, atoi(argv[3]), argv[2], atoi(argv[4]));
 }
 
 
 
-void run(List network, int delay){
-    int tick = 0;
-
-    while(1){
+void run(Btree *network, int delay, int max_tick, char *output, int output_rate){
+    FILE *output_file = fopen(output, "w");
+    int tick = 1;
+    int packet_loss = 0;
+    List all_hosts;
+    get_hosts(network, &all_hosts);
+    while(tick < max_tick){
         //Notes the time before the tick runs.
-        time_t start,end;
+        /*time_t start,end;
         double dif;
-        time (&start);
+        time (&start);*/
 
         //the functionality of the program.
-        //loop_opjects(network, tick);
-        
+        packet_loss += loop_opjects(network, &all_hosts, tick);        
  
         //Notes the time after is run, calculates the difference in time between the beginning and end of the tick.
-        time (&end);
+        /*time (&end);
         dif = difftime (end,start);
 
         //adds a delay so we can control the speed of the program without affecting traffic. 
-        if(dif < (delay)/1000){
-            sleep(delay/1000-dif);
-        }
+        if(dif < ((double)delay) / 1000){
+            sleep((double)delay / 1000 - dif);
+        }*/
 
         //adds 1 to the tick counter.
+        if(tick % output_rate == 0){
+            fprintf(output_file, "%d %d\n", tick, packet_loss);
+            packet_loss = 0;
+        }
         tick++;
+    }
+    fclose(output_file);
+}
+
+void get_hosts(Btree *network, List *hosts){
+    if(network != NULL){
+        if(*(int *)network->item == HOST){
+            list_add(hosts,(void *)(((Host *)(network->item))->id));
+        }
+        get_hosts(network->greater, hosts);
+        get_hosts(network->smaller, hosts);
     }
 }
 
@@ -100,7 +119,6 @@ int action_router(Router *source){
     if(source->queue.read != source->queue.write){
         /*Get destination*/
         destination = ((PacketHeader *)source->queue.read)->destination_address;
-        
         /*Find next spot*/
         while(1){
             for(i = 0; source->routing_tree[i].node == destination; i++);
@@ -120,29 +138,47 @@ int action_router(Router *source){
         }
         else{
             /*Rotuer to Rotuer*/
-            reslut = send(source, (Router *)destination);
+            result = send(source, (Router *)destination);
         }
     }
-    return reslut;
+    return result;
 }
 
-int action_host(Host *source){
-    create_packet(*source, *source, source->Send, 68);
-    return = send_to_router(source, source->address->connection) == 0
+int action_host(Host *source, List *all_hosts){
+    int dest_nr = rand() % all_hosts->length;
+    int i;
+    Item *destination = all_hosts->first;
+    for(i = 0; i < dest_nr; i++){
+        destination = destination->next;
+    } 
+    create_packet(*source, *(Host *)(destination->item), source->Send, 68);
+    return  send_to_router(source, source->address->connection) == 0;
+}
+
+int loop_opjects(Btree *network, List *all_hosts, int tick){
+    int rtn = 0; /*Packets lost*/
+    if(network != NULL){
+        /*Router*/
+        if(*(int *) network->item == ROUTER){
+            Router *active = (Router *)network->item;
+            if(tick % active->speed == 0){
+                rtn = action_router(active) > 0;
+            }
+        }
+        /*Host*/
+        else{
+            Host *active = (Host *)network->item;
+            if(tick % active->speed == 0){
+                rtn = action_host(active, all_hosts) > 0;
+            }
+        }
+        /*Do subtrees*/
+        rtn += loop_opjects(network->greater, all_hosts, tick);
+        rtn += loop_opjects(network->smaller, all_hosts, tick);
+    }
+    return rtn;
 }
 /*
-loop_opjects(List *network, int tick){
-    void *active = network->first;
-    while(active != NULL){
-        if(*(int*)active == 1){
-            action_router((Router *)active), tick);
-        }
-        else(
-            action_host((Host *)active), tick);
-        )
-    }
-}
-
 void action_router(Router *R, int tick){
     if(!(tick % R->speed)){
         router_send_packet(R);
