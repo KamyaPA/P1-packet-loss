@@ -117,11 +117,19 @@ int action_router(Router *source){
     int result = 1;
     /*Is the queue empty*/
     if(source->queue.read != source->queue.write){
+        PacketHeader header;
+        char *read = source->queue.read;
+        for(i = 0; i < sizeof(PacketHeader); i++){
+            ((char *)&header)[i] = *(read++);
+            if(read - source->queue.start > source->queue.length){
+                read = source->queue.start;
+            }
+        }
         /*Get destination*/
-        destination = ((PacketHeader *)source->queue.read)->destination_address;
+        destination = header.destination_address;
         /*Find next spot*/
         while(1){
-            for(i = 0; source->routing_tree[i].node == destination; i++);
+            for(i = 0; source->routing_tree[i].node != destination; i++);
             if((void *) source == source->routing_tree[i].node_before){
                 break;
             }

@@ -30,46 +30,45 @@ PacketHeader create_packet(Host H1, Host H2, void* where, int size_of_packet){
 
 
 int send(Router *from, Router *to){
-   int return_val;
-   char * PH = malloc(sizeof(PacketHeader));
-   char * Packet;
-   for(int i =0; i < sizeof(PacketHeader); i++){
+    int return_val;
+    PacketHeader PH;
+    char * Packet;
+    for(int i =0; i < sizeof(PacketHeader); i++){
 
-      *(PH+i) = *(from->queue.read++);
-      if(from->queue.read - from->queue.start > from->queue.length){
-         from->queue.read = from->queue.start;
-      }
-   }
-   int length = ((PacketHeader *)PH)->payload_length;
-   Packet = malloc(sizeof(length));
-   for(int i =0; i < length; i++){
-      *(Packet+i) = *(from->queue.read++);
-      if(from->queue.read - from->queue.start > from->queue.length){
-         from->queue.read = from->queue.start;
-      }
-   }
-   if(length + sizeof(PacketHeader) < space_left(to)){
-      for(int i =0; i < sizeof(PacketHeader); i++){
+        ((char *)&PH)[i] = *(from->queue.read++);
+        if(from->queue.read - from->queue.start > from->queue.length){
+            from->queue.read = from->queue.start;
+        }
+    }
+    int length = PH.payload_length;
+    Packet = (char *) malloc(sizeof(length));
+    for(int i =0; i < length; i++){
+        Packet[i] = *(from->queue.read++);
+        if(from->queue.read - from->queue.start > from->queue.length){
+            from->queue.read = from->queue.start;
+        }
+    }
+    if(length + sizeof(PacketHeader) < space_left(to)){
+        for(int i =0; i < sizeof(PacketHeader); i++){
 
-         *(to->queue.write++)= *(PH+i);
-         if(to->queue.write - to->queue.start > to->queue.length){
-            to->queue.write = to->queue.start;
-         }
-      }
-      for(int i =0; i < length; i++){
-         *(to->queue.write++) = *(Packet+i);
-         if(to->queue.write - to->queue.start > to->queue.length){
-            to->queue.write = to->queue.start;
-         }
-      }
-      return_val = 1;
-   }
-   else{
-      return_val = 0;      
-   }
-   free(PH);
-   free(Packet);
-   return return_val;
+            *(to->queue.write++) = ((char *)&PH)[i];
+            if(to->queue.write - to->queue.start > to->queue.length){
+                to->queue.write = to->queue.start;
+            }
+        }
+        for(int i =0; i < length; i++){
+            *(to->queue.write++) = Packet[i];
+            if(to->queue.write - to->queue.start > to->queue.length){
+                to->queue.write = to->queue.start;
+            }
+        }
+        return_val = 1;
+    }
+    else{
+        return_val = 0;      
+    }
+    free(Packet);
+    return return_val;
 }
 
 int send_to_router(Host *from, Router *to){
