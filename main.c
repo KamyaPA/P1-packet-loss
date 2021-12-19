@@ -73,7 +73,7 @@ void run(Btree *network, int delay, int max_tick, char *output, int output_rate)
     int packet_loss = 0;
     List all_hosts;
     get_hosts(network, &all_hosts);
-    while(tick < max_tick){
+    while(tick <= max_tick){
         //Notes the time before the tick runs.
         /*time_t start,end;
         double dif;
@@ -146,7 +146,7 @@ int action_router(Router *source){
         }
         else{
             /*Rotuer to Rotuer*/
-            result = send(source, (Router *)destination);
+            result = send_from_to_router(source, (Router *)destination);
         }
     }
     return result;

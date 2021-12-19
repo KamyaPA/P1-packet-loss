@@ -6,7 +6,7 @@
 #include "host.h"
 #include "packet.h"
 #include "create_function.h"
-int send(Router *from, Router *to);
+int send_from_to_router(Router *from, Router *to);
 int space_left(Router *R);
 
 
@@ -29,7 +29,7 @@ PacketHeader create_packet(Host H1, Host H2, void* where, int size_of_packet){
 }
 
 
-int send(Router *from, Router *to){
+int send_from_to_router(Router *from, Router *to){
     int return_val;
     PacketHeader PH;
     char * Packet;

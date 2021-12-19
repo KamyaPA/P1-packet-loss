@@ -31,4 +31,4 @@ typedef struct Edge{
 }Edge;
 
 /*Prototype*/
-void connect(void *r_one, void *r_two, int length);
+void connect_objects(void *r_one, void *r_two, int length);
