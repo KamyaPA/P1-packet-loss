@@ -73,6 +73,12 @@ void run(Btree *network, int delay, int max_tick, char *output, int output_rate)
     int packet_loss = 0;
     List all_hosts;
     get_hosts(network, &all_hosts);
+
+    if(output_file == NULL){
+        printf("Couldn't open file %s", output);
+        exit(1);
+    }
+
     while(tick <= max_tick){
         //Notes the time before the tick runs.
         /*time_t start,end;

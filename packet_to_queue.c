@@ -6,6 +6,7 @@
 #include "host.h"
 #include "packet.h"
 #include "create_function.h"
+#include "malloc_check.h"
 int send_from_to_router(Router *from, Router *to);
 int space_left(Router *R);
 
@@ -41,7 +42,7 @@ int send_from_to_router(Router *from, Router *to){
         }
     }
     int length = PH.payload_length;
-    Packet = (char *) malloc(sizeof(length));
+    Packet = (char *) malloc_check(sizeof(length));
     for(int i =0; i < length; i++){
         Packet[i] = *(from->queue.read++);
         if(from->queue.read - from->queue.start > from->queue.length){

@@ -3,6 +3,7 @@
 #include <string.h>
 #include "create_function.h"
 #include "tree.h"
+#include "malloc_check.h"
 
 #ifndef INCLUDED_ROUTINGTREE_H
 #include "routing_tree.h"
@@ -59,7 +60,7 @@ void create_network(Btree *network, char *conf_file_path){
                 }
 
                 if(strcmp(command, "addr") == 0){   /*Add router*/
-                    Router *new = (Router *) malloc (sizeof(Router));
+                    Router *new = (Router *) malloc_check (sizeof(Router));
                     int capacity, speed;
                     arguments_check(i, ADDR_ARGUMENTS, line_nr);
                     sscanf(arguments[1],"%d", &capacity);
@@ -70,7 +71,7 @@ void create_network(Btree *network, char *conf_file_path){
                     network_nodes++;
                 }
                 else if(strcmp(command, "addh") == 0){ /*Add host*/
-                    Host *new = (Host *) malloc (sizeof(Host));
+                    Host *new = (Host *) malloc_check (sizeof(Host));
                     int speed;
                     arguments_check(i, ADDH_ARGUMENTS, line_nr);
                     sscanf(arguments[1],"%d", &speed);
@@ -138,7 +139,7 @@ void create_network(Btree *network, char *conf_file_path){
         int found_index;
         
         /*Setup for routing tree*/
-        void **all_nodes = (void **)malloc(sizeof(void *) * network_nodes);
+        void **all_nodes = (void **)malloc_check(sizeof(void *) * network_nodes);
         copy_tree(network, all_nodes, 0);
 
         /*Sort each network item by spot in memory*/

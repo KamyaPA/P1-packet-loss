@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "malloc_check.h"
 
 #define max_node 100 // total nodes
 #define max_distance 1000000000 // it means that node isn't connected
@@ -32,7 +33,7 @@ int list_tree(char *read_file, char *save_file)
             fscanf(fp,"%d%d", &sum_node, &sum_line);
             for(int i=1;i<=sum_node;i++)
                 for(int j=1;j<=sum_node;j++) connect_arr[i][j]=0;
-            router_list = (int*)malloc(sum_node*sizeof(int));
+            router_list = (int*)malloc_check(sum_node*sizeof(int));
             for(int i=0; i<sum_node; i++)
             {
                 int j=i+1;

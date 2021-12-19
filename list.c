@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "list.h"
+#include "malloc_check.h"
 
 List create_list(){
     List new;
@@ -10,7 +11,7 @@ List create_list(){
 }
 
 void list_add(List *list, void *item){
-    Item *new = (Item *) malloc (sizeof(Item));
+    Item *new = (Item *) malloc_check (sizeof(Item));
     new->item = item;
     new->next = NULL;
     if(list->length == 0){
