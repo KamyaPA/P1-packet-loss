@@ -40,6 +40,7 @@
 #include "packet_to_queue.h"
 
 #define PACKET_REACHED_DESTINATION 2
+
 int find_compare(const void * tree, const void * item);
 void run(Btree *network, int delay, int max_tick, char *output, int output_rate);
 int loop_opjects(Btree *network, List *all_hosts, int tick);
@@ -166,7 +167,7 @@ int action_host(Host *source, List *all_hosts){
         destination = destination->next;
     } 
     create_packet(*source, *(Host *)(destination->item), source->Send, 68);
-    return  send_to_router(source, source->address->connection) == 0;
+    return  send_to_router(source, source->address->connection);
 }
 
 int loop_opjects(Btree *network, List *all_hosts, int tick){
@@ -176,14 +177,14 @@ int loop_opjects(Btree *network, List *all_hosts, int tick){
         if(*(int *) network->item == ROUTER){
             Router *active = (Router *)network->item;
             if(tick % active->speed == 0){
-                rtn = action_router(active) > 0;
+                rtn = (action_router(active) == 0);
             }
         }
         /*Host*/
         else{
             Host *active = (Host *)network->item;
             if(tick % active->speed == 0){
-                rtn = action_host(active, all_hosts) > 0;
+                rtn = (action_host(active, all_hosts) == 0);
             }
         }
         /*Do subtrees*/

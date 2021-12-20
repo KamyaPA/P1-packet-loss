@@ -49,9 +49,9 @@ void create_network(Btree *network, char *conf_file_path){
     file = fopen(conf_file_path, "r");      /*  Opens specific file.          */
 
     while (fgets(str, MAX_STR_LN, file)){   /*  Reads a file, line by line.   */
-        if(strcmp(str, "\n") != 0){         /*  Is it an empty line           */
+        if(strcmp(str, "\n") != 0){         /*  Is it an empty line?          */
             command = strtok(str, delim);
-            if(command[0] != '#'){          /*  Is it a commed                */
+            if(command[0] != '#'){          /*  Is it a commend?              */
                 int i = 0;
                 char *argument;
                 while((argument = strtok(NULL, delim))){ /*Load arguments to array*/
@@ -59,7 +59,7 @@ void create_network(Btree *network, char *conf_file_path){
                     i++;
                 }
 
-                if(strcmp(command, "addr") == 0){   /*Add router*/
+                if(strcmp(command, "addr") == 0){   /*Add router                */
                     Router *new = (Router *) malloc_check (sizeof(Router));
                     int capacity, speed;
                     arguments_check(i, ADDR_ARGUMENTS, line_nr);
@@ -70,7 +70,7 @@ void create_network(Btree *network, char *conf_file_path){
                     router_add(network, new);
                     network_nodes++;
                 }
-                else if(strcmp(command, "addh") == 0){ /*Add host*/
+                else if(strcmp(command, "addh") == 0){ /*Add host               */
                     Host *new = (Host *) malloc_check (sizeof(Host));
                     int speed;
                     arguments_check(i, ADDH_ARGUMENTS, line_nr);
@@ -139,17 +139,10 @@ void create_network(Btree *network, char *conf_file_path){
         int found_index;
         
         /*Setup for routing tree*/
-        void **all_nodes = (void **)malloc_check(sizeof(void *) * network_nodes);
+        void **all_nodes = (void **) malloc_check (sizeof(void *) * network_nodes);
         copy_tree(network, all_nodes, 0);
 
-        /*Sort each network item by spot in memory*/
-        /*qsort(all_nodes, network_nodes, sizeof(void *), pointer_compare);
-        
-        for(i = 0; i < network_nodes - 1; i++){
-            printf("%d %d %p\n", all_nodes[i] > all_nodes[i + 1], all_nodes[i] == all_nodes[i + 1], all_nodes[i]);
-        } 
-        exit(-1);*/
-        /*Creates the configfile for the dijstras algorithem*/
+        /*Opens the configfile for the dijstras algorithem for writing*/
         routing_tree_file = fopen(ROUTING_TREE_IN_FILNAME, "w");
 
         fprintf(routing_tree_file, "%d %d\n", network_nodes, network_edges);
@@ -174,7 +167,6 @@ void create_network(Btree *network, char *conf_file_path){
         fclose(routing_tree_file);
 
         list_tree(ROUTING_TREE_IN_FILNAME, ROUTING_TREE_OUT_FILNAME);
-
         /*TRANSLATING OUTPUTFILE*/
 
         routing_tree_file = fopen(ROUTING_TREE_OUT_FILNAME, "r");
@@ -206,7 +198,7 @@ void create_network(Btree *network, char *conf_file_path){
                     desination = atoi(tmp_str);
                     desination--; /*Beaceuse an array starts with a null, and the file starts at one*/
                     tree_index = router_index > desination ? desination : desination - 1; /*Get loacation of path in queue*/
-                    if(active_router->routing_tree[tree_index].node == NULL){ /*If new path*/
+                    if(active_router->routing_tree[tree_index].node == NULL){ /* If new path */
                         active_router->routing_tree[tree_index].node = all_nodes[desination];
                         active_router->routing_tree[tree_index].node_before = all_nodes[visited_before];
                     }

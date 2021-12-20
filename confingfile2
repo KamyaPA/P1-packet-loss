@@ -1,0 +1,6 @@
+addr R 1000 1
+addh H1 10
+addh H2 10
+
+conh H1 R 10
+conh H2 R 10

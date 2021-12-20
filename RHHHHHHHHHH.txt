@@ -1,0 +1,21 @@
+addr R1 1000 1
+addh H1 11
+conh H1 R1 5
+addh H2 11
+conh H2 R1 5
+addh H3 11
+conh H3 R1 5
+addh H4 11
+conh H4 R1 5
+addh H5 11
+conh H5 R1 5
+addh H6 11
+conh H6 R1 5
+addh H7 11
+conh H7 R1 5
+addh H8 11
+conh H8 R1 5
+addh H9 11
+conh H9 R1 5
+addh H10 11
+conh H10 R1 5

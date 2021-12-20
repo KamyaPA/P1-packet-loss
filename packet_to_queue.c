@@ -7,10 +7,9 @@
 #include "packet.h"
 #include "create_function.h"
 #include "malloc_check.h"
+
 int send_from_to_router(Router *from, Router *to);
 int space_left(Router *R);
-
-
 
 PacketHeader create_packet(Host H1, Host H2, void* where, int size_of_packet){
     PacketHeader P;
@@ -35,7 +34,6 @@ int send_from_to_router(Router *from, Router *to){
     PacketHeader PH;
     char * Packet;
     for(int i =0; i < sizeof(PacketHeader); i++){
-
         ((char *)&PH)[i] = *(from->queue.read++);
         if(from->queue.read - from->queue.start > from->queue.length){
             from->queue.read = from->queue.start;
@@ -103,7 +101,7 @@ int send_to_host(Router *from, Host *to){
     *((PacketHeader *)to->Receive) = header;
     /*Get the rest*/
     for(i = 0; i <  header.payload_length; i++){ 
-        to->Send[i + sizeof(PacketHeader)] = *(from->queue.read++);
+        to->Receive[i + sizeof(PacketHeader)] = *(from->queue.read++);
         if(from->queue.read - from->queue.start > from->queue.length){
             from->queue.read = from->queue.start;
         }
