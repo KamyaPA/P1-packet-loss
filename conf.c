@@ -3,6 +3,7 @@
 #include <string.h>
 #include "create_function.h"
 #include "tree.h"
+#include "malloc_check.h"
 
 #ifndef INCLUDED_ROUTINGTREE_H
 #include "routing_tree.h"
@@ -48,9 +49,9 @@ void create_network(Btree *network, char *conf_file_path){
     file = fopen(conf_file_path, "r");      /*  Opens specific file.          */
 
     while (fgets(str, MAX_STR_LN, file)){   /*  Reads a file, line by line.   */
-        if(strcmp(str, "\n") != 0){         /*  Is it an empty line           */
+        if(strcmp(str, "\n") != 0){         /*  Is it an empty line?          */
             command = strtok(str, delim);
-            if(command[0] != '#'){          /*  Is it a commed                */
+            if(command[0] != '#'){          /*  Is it a commend?              */
                 int i = 0;
                 char *argument;
                 while((argument = strtok(NULL, delim))){ /*Load arguments to array*/
@@ -58,26 +59,24 @@ void create_network(Btree *network, char *conf_file_path){
                     i++;
                 }
 
-                if(strcmp(command, "addr") == 0){   /*Add router*/
-                    Router *new = (Router *) malloc (sizeof(Router));
+                if(strcmp(command, "addr") == 0){   /*Add router                */
+                    Router *new = (Router *) malloc_check (sizeof(Router));
                     int capacity, speed;
                     arguments_check(i, ADDR_ARGUMENTS, line_nr);
                     sscanf(arguments[1],"%d", &capacity);
                     sscanf(arguments[2],"%d", &speed);
-                    printf("ADD: router, name %s, speed %d, capacity %d\n",
-                        arguments[0], speed, capacity);
                     *new = router_create(speed, arguments[0], capacity);
+                    new->id = new;
                     router_add(network, new);
                     network_nodes++;
                 }
-                else if(strcmp(command, "addh") == 0){ /*Add host*/
-                    Host *new = (Host *) malloc (sizeof(Host));
+                else if(strcmp(command, "addh") == 0){ /*Add host               */
+                    Host *new = (Host *) malloc_check (sizeof(Host));
                     int speed;
                     arguments_check(i, ADDH_ARGUMENTS, line_nr);
                     sscanf(arguments[1],"%d", &speed);
-                    printf("ADD: host, name %s, speed %d\n",
-                        arguments[0], speed);
                     *new = host_create(speed, arguments[0]);
+                    new->id = new;
                     host_add(network, new);
                     network_nodes++;
                 }
@@ -86,8 +85,6 @@ void create_network(Btree *network, char *conf_file_path){
                     void *r1, *r2;
                     arguments_check(i, CONR_ARGUMENTS, line_nr);
                     sscanf(arguments[2],"%d", &length);
-                    printf("CONNECT: router name %s, router name %s, length %d\n",
-                        arguments[0], arguments[1], length);
                     
                     r1 = btree_find(network, arguments[0], find_compare);
                     if(r1 == NULL){
@@ -99,7 +96,7 @@ void create_network(Btree *network, char *conf_file_path){
                         not_defined(arguments[1], line_nr);
                     }
 
-                    connect(r1, r2, length);
+                    connect_objects(r1, r2, length);
                     network_edges++;
                 }    
                 else if(strcmp(command, "conh") == 0){ /*Connect host to router*/
@@ -107,8 +104,6 @@ void create_network(Btree *network, char *conf_file_path){
                     void *host, *router;
                     arguments_check(i, CONH_ARGUMENTS, line_nr);
                     sscanf(arguments[2],"%d", &length);
-                    printf("CONNECT: host name %s, router name %s, length %d\n",
-                        arguments[0], arguments[1], length);
                     
                     /*Error check*/
                     host = btree_find(network, arguments[0], find_compare);
@@ -121,7 +116,7 @@ void create_network(Btree *network, char *conf_file_path){
                         not_defined(arguments[1], line_nr);
                     }
 
-                    connect(host, router, length);
+                    connect_objects(host, router, length);
                     network_edges++;
                 }
                 else{                                  /*Error*/
@@ -144,17 +139,10 @@ void create_network(Btree *network, char *conf_file_path){
         int found_index;
         
         /*Setup for routing tree*/
-        void **all_nodes = (void **)malloc(sizeof(void *) * network_nodes);
+        void **all_nodes = (void **) malloc_check (sizeof(void *) * network_nodes);
         copy_tree(network, all_nodes, 0);
 
-        /*Sort each network item by spot in memory*/
-        /*qsort(all_nodes, network_nodes, sizeof(void *), pointer_compare);
-        
-        for(i = 0; i < network_nodes - 1; i++){
-            printf("%d %d %p\n", all_nodes[i] > all_nodes[i + 1], all_nodes[i] == all_nodes[i + 1], all_nodes[i]);
-        } 
-        exit(-1);*/
-        /*Creates the configfile for the dijstras algorithem*/
+        /*Opens the configfile for the dijstras algorithem for writing*/
         routing_tree_file = fopen(ROUTING_TREE_IN_FILNAME, "w");
 
         fprintf(routing_tree_file, "%d %d\n", network_nodes, network_edges);
@@ -179,7 +167,6 @@ void create_network(Btree *network, char *conf_file_path){
         fclose(routing_tree_file);
 
         list_tree(ROUTING_TREE_IN_FILNAME, ROUTING_TREE_OUT_FILNAME);
-
         /*TRANSLATING OUTPUTFILE*/
 
         routing_tree_file = fopen(ROUTING_TREE_OUT_FILNAME, "r");
@@ -188,9 +175,13 @@ void create_network(Btree *network, char *conf_file_path){
             int tree_index;
             int desination;
             int visited_before;
+            char *tmp_str;
             
-            fscanf(routing_tree_file, "%d", &router_index);
+            fgets(str, MAX_STR_LN, routing_tree_file); 
+
+            router_index = atoi(strtok(str, delim));
             router_index--; /*Beaceuse an array starts with a null, and the file starts at one*/
+
             if(*(int *)all_nodes[router_index] == ROUTER){
                 Router *active_router = (Router *)all_nodes[router_index];
                 desination = router_index; /* Important for a 1 distance network */
@@ -198,18 +189,16 @@ void create_network(Btree *network, char *conf_file_path){
                 if(active_router->routing_tree == NULL){ /*Allocate space for the routing tree*/
                     active_router->routing_tree = (RtreeItem *) calloc (sizeof(RtreeItem), network_nodes - 1);
                     if(active_router->routing_tree == NULL){
-                       printf("Couldn't allocate the space for malloc");
-                      exit(1); 
+                        printf("Couldn't allocate the space for malloc");
+                        exit(1); 
                     }
                 }
-
-                if(fgetc(routing_tree_file) != '\n'){
+                while((tmp_str = strtok(NULL, delim)) != NULL){
                     visited_before = desination;
-                    fscanf(routing_tree_file, "%d", &desination);
+                    desination = atoi(tmp_str);
                     desination--; /*Beaceuse an array starts with a null, and the file starts at one*/
-                    tree_index = router_index < desination ? router_index : router_index - 1;
-                    
-                    if(active_router->routing_tree[tree_index].node != NULL){
+                    tree_index = router_index > desination ? desination : desination - 1; /*Get loacation of path in queue*/
+                    if(active_router->routing_tree[tree_index].node == NULL){ /* If new path */
                         active_router->routing_tree[tree_index].node = all_nodes[desination];
                         active_router->routing_tree[tree_index].node_before = all_nodes[visited_before];
                     }

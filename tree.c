@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include "tree.h"
 #include "router.h"
+#include "malloc_check.h"
 
 Btree btree_create(){
     Btree new;
@@ -25,7 +26,7 @@ void btree_add(Btree *tree, void * item, int (*compare)(const void *, const void
         }
 
         if(*active == NULL){
-            Btree *new = (Btree *) malloc (sizeof(Btree)); 
+            Btree *new = (Btree *) malloc_check (sizeof(Btree)); 
             *new = btree_create();
             new->item = item;
             *active = new;

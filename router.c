@@ -29,7 +29,7 @@ Edge create_edge(){
     return new;
 }
 
-void connect(void *r1, void *r2, int length){
+void connect_objects(void *r1, void *r2, int length){
     //allocates memory for edges
     Edge *r_one = (Edge*) malloc (sizeof(Edge));
     Edge *r_two = (Edge*) malloc (sizeof(Edge));
