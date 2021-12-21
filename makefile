@@ -13,7 +13,7 @@ FILES := main.o conf.o list.o tree.o create_function.o router.o routing_tree.o p
 BUILD := build/
 
 ifeq ($(UNAME), $(UNAME_LINUX))
-CLINUXFLAGS := -lm
+CLINUXFLAGS := -lm -lncurses
 EXTENTION := .out
 endif
 
