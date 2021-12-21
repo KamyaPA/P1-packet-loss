@@ -1,6 +1,8 @@
 # P1-packet-loss
 A P1 software program from AAU
 
+Does not run on Windows, more stable on Linux and Mac
+
 
 How to commit
 
