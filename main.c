@@ -47,6 +47,7 @@ int loop_opjects(Btree *network, List *all_hosts, int tick);
 int action_router(Router *source);
 int action_host(Host *source, List *all_hosts);
 void get_hosts(Btree *network, List *hosts);
+int random_range(int, int);
 
 /* argv[1] config-file,
  * argv[2] output-file
@@ -166,7 +167,7 @@ int action_host(Host *source, List *all_hosts){
     for(i = 0; i < dest_nr; i++){
         destination = destination->next;
     } 
-    create_packet(*source, *(Host *)(destination->item), source->Send, 68);
+    create_packet(*source, *(Host *)(destination->item), source->Send, random_range(sizeof(PacketHeader) + 10, 255));
     return  send_to_router(source, source->address->connection);
 }
 
@@ -192,6 +193,11 @@ int loop_opjects(Btree *network, List *all_hosts, int tick){
         rtn += loop_opjects(network->smaller, all_hosts, tick);
     }
     return rtn;
+}
+
+/*Print a random number beteen lower and upper*/
+int random_range(int lower, int upper){
+    return (rand() % (upper - lower + 1)) + (lower);
 }
 /*
 void action_router(Router *R, int tick){
