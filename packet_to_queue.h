@@ -12,3 +12,4 @@ int send_from_to_router(Router *from, Router *to);
 PacketHeader create_packet(Host H1, Host H2, void* where, int size_of_packet);
 int send_to_router(Host *from, Router *to);
 int send_to_host(Router *from, Host *to);
+int space_left(Router *);

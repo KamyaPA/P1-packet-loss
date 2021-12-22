@@ -3,6 +3,7 @@
 #include <string.h>
 #include <math.h>
 #include <time.h>
+#include <ncurses.h>
 
 #ifdef _WIN32
 #include <Windows.h>
@@ -47,11 +48,15 @@ int loop_opjects(Btree *network, List *all_hosts, int tick);
 int action_router(Router *source);
 int action_host(Host *source, List *all_hosts);
 void get_hosts(Btree *network, List *hosts);
+int random_range(int, int);
+void print_network(Btree *network, int tick, int *y, int *x);
+void print_screen(Btree *network, int tick, int delay, int packet_loss);
 
 /* argv[1] config-file,
  * argv[2] output-file
  * argv[3] hwo many ticks
  * argv[4] ouput how often
+ * argv[5] delay
  */
 int main(int argc, char *argv[]){ 
     /*double delay;*/
@@ -63,7 +68,10 @@ int main(int argc, char *argv[]){
     }
     srand(time(NULL));
     create_network(&network, argv[1]);
-    run(&network, 0, atoi(argv[3]), argv[2], atoi(argv[4]));
+    initscr();
+    curs_set(0);
+    run(&network, atoi(argv[5]), atoi(argv[3]), argv[2], atoi(argv[4]));
+    endwin();
 }
 
 
@@ -72,7 +80,9 @@ void run(Btree *network, int delay, int max_tick, char *output, int output_rate)
     FILE *output_file = fopen(output, "w");
     int tick = 1;
     int packet_loss = 0;
-    List all_hosts;
+    int total_packet_loss = 0;
+    int round_packet_loss = 0;
+    List all_hosts = create_list();
     get_hosts(network, &all_hosts);
 
     if(output_file == NULL){
@@ -82,30 +92,61 @@ void run(Btree *network, int delay, int max_tick, char *output, int output_rate)
 
     while(tick <= max_tick){
         //Notes the time before the tick runs.
-        /*time_t start,end;
+        time_t start, end;
         double dif;
-        time (&start);*/
+        time (&start);
 
         //the functionality of the program.
-        packet_loss += loop_opjects(network, &all_hosts, tick);        
- 
+        round_packet_loss = loop_opjects(network, &all_hosts, tick);        
+        packet_loss += round_packet_loss;
         //Notes the time after is run, calculates the difference in time between the beginning and end of the tick.
-        /*time (&end);
+        time (&end);
         dif = difftime (end,start);
 
         //adds a delay so we can control the speed of the program without affecting traffic. 
         if(dif < ((double)delay) / 1000){
             sleep((double)delay / 1000 - dif);
-        }*/
+        }
 
         //adds 1 to the tick counter.
         if(tick % output_rate == 0){
             fprintf(output_file, "%d %d\n", tick, packet_loss);
             packet_loss = 0;
         }
+        total_packet_loss += round_packet_loss;
+        round_packet_loss = 0;
+        print_screen(network, tick, delay, total_packet_loss);
         tick++;
     }
     fclose(output_file);
+}
+void print_screen(Btree *network, int tick, int delay, int packet_loss){
+    int y = 1, x = 1;
+    mvprintw(y, x, "Tick = %d, Delay = %d, Total packet_loss = %d", tick, delay, packet_loss);
+    y += 2;
+    mvprintw(y, x, "%7s| %20s | %13s | %5s ", "Object", "Name", "Speed    ", "Queue space left");
+    y++;
+    mvprintw(y, x, "================================================================");
+    y++;
+    print_network(network, tick, &y, &x);
+    refresh();    
+}
+
+void print_network(Btree *network, int tick, int *y, int *x){
+    if(network != NULL){
+        if(*(int *)network->item == ROUTER){
+            Router /*HII*/  *active = (Router *)network->item;
+            mvprintw(*y, *x, "%7s: %20s | %5d / %-5d | %7d / %-7d", "Router", 
+                    active->name, tick % active->speed, active->speed, space_left(active), active->queue.length);
+        }
+        else{ 
+            Host *active = (Host *)network->item;
+            mvprintw(*y, *x, "%7s: %20s | %5d / %-5d |", "Host", active->name, tick % active->speed, active->speed);
+        }
+        (*y)++;
+        print_network(network->greater, tick, y, x);
+        print_network(network->smaller, tick, y, x);
+    }
 }
 
 void get_hosts(Btree *network, List *hosts){
@@ -166,7 +207,7 @@ int action_host(Host *source, List *all_hosts){
     for(i = 0; i < dest_nr; i++){
         destination = destination->next;
     } 
-    create_packet(*source, *(Host *)(destination->item), source->Send, 68);
+    create_packet(*source, *(Host *)(destination->item), source->Send, random_range(sizeof(PacketHeader) + 10, 255));
     return  send_to_router(source, source->address->connection);
 }
 
@@ -192,6 +233,11 @@ int loop_opjects(Btree *network, List *all_hosts, int tick){
         rtn += loop_opjects(network->smaller, all_hosts, tick);
     }
     return rtn;
+}
+
+/*Print a random number beteen lower and upper*/
+int random_range(int lower, int upper){
+    return (rand() % (upper - lower + 1)) + (lower);
 }
 /*
 void action_router(Router *R, int tick){
