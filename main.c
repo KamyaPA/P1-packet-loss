@@ -69,6 +69,7 @@ int main(int argc, char *argv[]){
     srand(time(NULL));
     create_network(&network, argv[1]);
     initscr();
+    curs_set(0);
     run(&network, atoi(argv[5]), atoi(argv[3]), argv[2], atoi(argv[4]));
     endwin();
 }
@@ -123,7 +124,9 @@ void print_screen(Btree *network, int tick, int delay, int packet_loss){
     int y = 1, x = 1;
     mvprintw(y, x, "Tick = %d, Delay = %d, Total packet_loss = %d", tick, delay, packet_loss);
     y += 2;
-    mvprintw(y, x, "%7s| %20s | %13s | %5s ", "Objeckt", "Name", "Speed", "Queue space left");
+    mvprintw(y, x, "%7s| %20s | %13s | %5s ", "Object", "Name", "Speed    ", "Queue space left");
+    y++;
+    mvprintw(y, x, "================================================================");
     y++;
     print_network(network, tick, &y, &x);
     refresh();    
